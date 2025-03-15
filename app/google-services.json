@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "895302485810",
+    "project_id": "bloom-chat-test",
+    "storage_bucket": "bloom-chat-test.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:895302485810:android:acc83979e052a3e096f92b",
+        "android_client_info": {
+          "package_name": "com.example.bloom_chat_test"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5cV7-CG_w8qfhUT55_8NC4UsMQ-MDAGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
