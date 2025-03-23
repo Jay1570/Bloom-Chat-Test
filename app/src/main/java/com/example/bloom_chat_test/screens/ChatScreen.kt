@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -21,7 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bloom_chat_test.AppViewModelProvider
@@ -35,9 +38,12 @@ fun ChatScreen(
     viewModel: ChatViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
+    val listState = rememberLazyListState()
     LaunchedEffect(uiState.chats) {
         viewModel.markAllAsRead()
+        if (uiState.chats.isNotEmpty()) {
+            listState.scrollToItem(uiState.chats.size - 1)
+        }
     }
 
     Scaffold(
@@ -60,14 +66,43 @@ fun ChatScreen(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surface)
             ) {
+                val groupedChats = uiState.groupedChats()
                 LazyColumn(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth(),
-                    reverseLayout = true
+                    state = listState,
+                    reverseLayout = false
                 ) {
-                    items(uiState.chats) { chat ->
-                        ChatMessageItem(chat = chat, isFromMe = chat.senderId == uiState.currentUser)
+                    groupedChats.forEach { (date, chats) ->
+                        item {
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = date,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier
+                                        .background(
+                                            MaterialTheme.colorScheme.surfaceVariant,
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 15.sp
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(5.dp))
+                        }
+                        items(chats) { chat ->
+                            ChatMessageItem(
+                                chat = chat,
+                                isFromMe = chat.senderId == uiState.currentUser
+                            )
+                        }
                     }
                 }
 
@@ -205,7 +240,7 @@ fun ChatMessageItem(chat: Chat, isFromMe: Boolean) {
                 bottomEnd = if (isFromMe) 0f else 30f
             ),
             colors = CardDefaults.cardColors(
-                containerColor = if(isFromMe) orange else  MaterialTheme.colorScheme.surfaceContainer,
+                containerColor = if (isFromMe) orange else MaterialTheme.colorScheme.surfaceContainer,
                 contentColor = if (isFromMe) Color.White else MaterialTheme.colorScheme.onSurface,
             ),
         ) {

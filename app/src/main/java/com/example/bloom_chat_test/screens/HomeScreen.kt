@@ -41,7 +41,7 @@ fun HomeScreen(
         LazyColumn(contentPadding = it) {
             items(connections) { connections ->
                 val displayUser = if (connections.user1Id == currentUser) connections.user2Id else connections.user1Id
-                val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault()).format(connections.timestamp.toDate())
+                val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(connections.timestamp.toDate())
                 UserItem(
                     name = displayUser,
                     lastMessage = connections.lastMessage,

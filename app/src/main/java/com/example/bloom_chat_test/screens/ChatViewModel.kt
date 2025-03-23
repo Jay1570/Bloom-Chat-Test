@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class ChatViewModel(
     savedStateHandle: SavedStateHandle,
@@ -103,7 +105,7 @@ class ChatViewModel(
 
     private fun getChats() {
         listenerRegistration?.remove()
-        listenerRegistration = firestore.collection("chats").document(connectionId).collection("chats").orderBy("timestamp", Query.Direction.DESCENDING).addSnapshotListener { snapshot, e ->
+        listenerRegistration = firestore.collection("chats").document(connectionId).collection("chats").orderBy("timestamp", Query.Direction.ASCENDING).addSnapshotListener { snapshot, e ->
             if (e != null) {
                 Log.e("ChatViewModel", "Error fetching chats", e)
                 return@addSnapshotListener
@@ -126,4 +128,11 @@ data class ChatUiState(
     val currentUser: String = "",
     val receiverId: String = "",
     val message: String = ""
-)
+) {
+    fun groupedChats(): Map<String, List<Chat>> {
+        return chats.groupBy { chat ->
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            sdf.format(chat.timestamp.toDate())
+        }
+    }
+}
