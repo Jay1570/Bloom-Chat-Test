@@ -10,6 +10,7 @@ data class Chats(
 
 data class Chat(
     @DocumentId val id: String = "",
+    val read: Boolean = false,
     val senderId: String = "",
     val message: String = "",
     val timestamp: Timestamp = Timestamp.now()

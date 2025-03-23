@@ -14,16 +14,19 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bloom_chat_test.AppViewModelProvider
 import com.example.bloom_chat_test.model.Chat
+import com.example.bloom_chat_test.ui.theme.orange
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,24 +35,29 @@ fun ChatScreen(
     viewModel: ChatViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.chats) {
+        viewModel.markAllAsRead()
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    AppBar(onNavigateBack = navigateBack, name = uiState.currentUser)
+                    AppBar(onNavigateBack = navigateBack, name = uiState.receiverId)
                 }
             )
-        }
+        },
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .imePadding()
                 .padding(innerPadding)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .imePadding()
                     .background(MaterialTheme.colorScheme.surface)
             ) {
                 LazyColumn(
@@ -197,8 +205,8 @@ fun ChatMessageItem(chat: Chat, isFromMe: Boolean) {
                 bottomEnd = if (isFromMe) 0f else 30f
             ),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = MaterialTheme.colorScheme.onSurface,
+                containerColor = if(isFromMe) orange else  MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = if (isFromMe) Color.White else MaterialTheme.colorScheme.onSurface,
             ),
         ) {
             Text(

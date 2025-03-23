@@ -7,5 +7,8 @@ data class Connections(
     @DocumentId val id: String = "",
     val user1Id: String = "",
     val user2Id: String = "",
-    val timestamp: Timestamp = Timestamp.now()
+    val timestamp: Timestamp = Timestamp.now(),
+    val unreadCount: Int = 0,
+    val lastSenderId: String = "",
+    val lastMessage: String = "",
 )

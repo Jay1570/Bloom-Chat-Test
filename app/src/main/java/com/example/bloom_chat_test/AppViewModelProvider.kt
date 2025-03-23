@@ -24,7 +24,7 @@ object AppViewModelProvider {
         }
 
         initializer {
-            ChatViewModel(this.createSavedStateHandle(), myApp().userPreference, myApp().applicationContext)
+            ChatViewModel(this.createSavedStateHandle(), myApp().userPreference)
         }
     }
 }
